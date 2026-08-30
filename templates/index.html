@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FraudLens | Threat Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4 font-sans">
+    <div class="bg-slate-800/80 max-w-2xl w-full p-8 rounded-2xl shadow-2xl border border-slate-700">
+        <h1 class="text-3xl font-bold text-center text-rose-500 mb-2">FraudLens</h1>
+        <p class="text-slate-400 text-center mb-8 uppercase tracking-widest text-xs">E-Commerce Threat Console</p>
+        
+        <form method="POST" class="flex gap-4 mb-8">
+            <input type="text" name="url" placeholder="Enter target URL (e.g., electropi.in)" required 
+                   class="flex-1 bg-slate-900 border border-slate-600 rounded px-4 py-3 focus:outline-none focus:border-rose-500">
+            <button type="submit" class="bg-rose-500 hover:bg-rose-600 text-white font-bold px-6 py-3 rounded transition">
+                RUN SCAN
+            </button>
+        </form>
+
+        {% if report %}
+        <div class="bg-slate-900 p-6 rounded-lg border border-slate-700">
+            <div class="flex justify-between items-center mb-6 border-b border-slate-700 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold">{{ report.domain }}</h2>
+                    <p class="text-sm mt-1 font-bold {% if report.score >= 50 %}text-rose-500{% elif report.score >= 30 %}text-amber-400{% else %}text-emerald-400{% endif %}">
+                        VERDICT: {{ report.verdict }}
+                    </p>
+                </div>
+                <div class="text-right">
+                    <p class="text-4xl font-black {% if report.score >= 50 %}text-rose-500{% elif report.score >= 30 %}text-amber-500{% else %}text-emerald-500{% endif %}">
+                        {{ report.score }}<span class="text-lg text-slate-500">/100</span>
+                    </p>
+                </div>
+            </div>
+            <ul class="space-y-3">
+                {% for factor in report.factors %}
+                <li class="flex items-start gap-3 text-sm">
+                    {% if factor.type == 'danger' %} <span class="text-rose-500">⚠️</span>
+                    {% elif factor.type == 'warning' %} <span class="text-amber-500">⚡</span>
+                    {% else %} <span class="text-emerald-500">✓</span> {% endif %}
+                    <span class="text-slate-300">{{ factor.msg }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
